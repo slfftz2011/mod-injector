@@ -1,107 +1,44 @@
-import { getRemoteComponents, getComponentDownloadUrl } from '../api/componentApi';
 import {
-    getInstalledComponents,
     saveInstalledComponents,
-    saveLastSyncTime,
-    getLastSyncTime
+    getInstalledComponents,
+    saveLastSyncTime
 } from '../utils/storage';
 
-// 组件管理器类
-class ComponentManager {
+export class ComponentManager {
     constructor() {
-        this.components = []; // 所有组件（远程+本地）
-        this.installedComponents = []; // 已安装组件
-        this.init();
+        // 组件列表数据（实际项目中可能从接口获取）
+        this.components = [
+            {
+                id: 'comp1',
+                name: '基础样式优化',
+                description: '优化页面基础样式，提升视觉体验',
+                version: '1.0.0',
+                size: '2.3KB',
+                updateTime: '2024-05-01',
+                required: false
+            },
+            {
+                id: 'comp2',
+                name: '核心功能扩展',
+                description: '提供核心功能扩展，不可卸载',
+                version: '2.1.0',
+                size: '5.7KB',
+                updateTime: '2024-04-20',
+                required: true
+            }
+        ];
+        this.installedComponents = []; // 已安装组件列表
     }
 
-    // 初始化
+    // 初始化组件管理器
     async init() {
-        try {
-            // 加载本地已安装组件
-            this.installedComponents = await getInstalledComponents();
-            // 加载远程组件列表
-            await this.loadRemoteComponents();
-            // 渲染列表
-            this.renderComponentList();
-            // 绑定事件
-            this.bindEvents();
-        } catch (error) {
-            console.error('初始化失败:', error);
-            document.getElementById('componentList').innerHTML = '<div style="text-align: center; color: #f44336; padding: 2rem;">加载失败，请刷新页面重试</div>';
-        }
-    }
-
-    // 加载远程组件列表
-    async loadRemoteComponents() {
-        const res = await getRemoteComponents();
-        if (res.code === 200) {
-            this.components = res.data;
-            // 记录同步时间
-            await saveLastSyncTime(Date.now());
-        } else {
-            throw new Error('获取组件列表失败');
-        }
-    }
-
-    // 安装组件
-    async installComponent(componentId) {
-        const component = this.components.find(c => c.id === componentId);
-        if (!component) return false;
-
-        const isInstalled = this.installedComponents.some(c => c.id === componentId);
-        if (isInstalled) return false;
-
-        try {
-            // 实际项目中应调用下载接口
-            const downloadRes = await getComponentDownloadUrl(componentId);
-            console.log('下载链接:', downloadRes.url);
-
-            // 模拟下载成功后更新本地状态
-            this.installedComponents.push({
-                id: component.id,
-                enabled: true,
-                version: component.version,
-                installTime: Date.now()
-            });
-
-            await saveInstalledComponents(this.installedComponents);
-            this.renderComponentList();
-            alert(`组件《${component.name}》安装成功`);
-            return true;
-        } catch (error) {
-            console.error('安装失败:', error);
-            alert('安装失败: ' + error.message);
-            return false;
-        }
-    }
-
-    // 卸载组件
-    async uninstallComponent(componentId) {
-        const component = this.components.find(c => c.id === componentId);
-        if (component?.required) {
-            alert('核心组件不能卸载');
-            return false;
-        }
-
-        this.installedComponents = this.installedComponents.filter(c => c.id !== componentId);
-        await saveInstalledComponents(this.installedComponents);
+        // 从本地存储加载已安装组件
+        this.installedComponents = await getInstalledComponents();
         this.renderComponentList();
-        alert(`组件《${component?.name || componentId}》已卸载`);
-        return true;
+        this.bindEvents();
     }
 
-    // 切换组件启用状态
-    async toggleComponentStatus(componentId) {
-        const component = this.installedComponents.find(c => c.id === componentId);
-        if (!component) return false;
-
-        component.enabled = !component.enabled;
-        await saveInstalledComponents(this.installedComponents);
-        this.renderComponentList();
-        return true;
-    }
-
-    // 渲染组件列表
+    // 渲染组件列表（已有的渲染逻辑）
     renderComponentList() {
         const listEl = document.getElementById('componentList');
         const searchTerm = document.getElementById('component-search').value.toLowerCase();
@@ -154,86 +91,80 @@ class ComponentManager {
 
     // 绑定事件
     bindEvents() {
-        // 组件操作按钮事件
-        document.getElementById('componentList').addEventListener('click', async (e) => {
-            const target = e.target.closest('.component-btn');
-            if (!target) return;
+        const listEl = document.getElementById('componentList');
 
-            const componentId = target.dataset.id;
-            if (target.classList.contains('install-btn')) {
+        // 安装组件
+        listEl.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('install-btn')) {
+                const componentId = e.target.dataset.id;
                 await this.installComponent(componentId);
-            } else if (target.classList.contains('uninstall-btn')) {
-                await this.uninstallComponent(componentId);
-            } else if (target.classList.contains('enable-btn') || target.classList.contains('disable-btn')) {
+            }
+
+            // 启用/禁用组件
+            if (e.target.classList.contains('enable-btn') || e.target.classList.contains('disable-btn')) {
+                const componentId = e.target.dataset.id;
                 await this.toggleComponentStatus(componentId);
+            }
+
+            // 卸载组件
+            if (e.target.classList.contains('uninstall-btn')) {
+                const componentId = e.target.dataset.id;
+                await this.uninstallComponent(componentId);
             }
         });
 
         // 搜索和筛选事件
-        document.getElementById('component-search').addEventListener('input', () => {
-            this.renderComponentList();
+        document.getElementById('component-search').addEventListener('input', () => this.renderComponentList());
+        document.getElementById('component-filter').addEventListener('change', () => this.renderComponentList());
+    }
+
+    // 安装组件
+    async installComponent(componentId) {
+        const component = this.components.find(c => c.id === componentId);
+        if (!component) return;
+
+        // 添加到已安装列表（默认启用）
+        this.installedComponents.push({
+            ...component,
+            enabled: true
         });
 
-        document.getElementById('component-filter').addEventListener('change', () => {
-            this.renderComponentList();
-        });
+        // 保存到本地存储
+        await saveInstalledComponents(this.installedComponents);
+        // 更新最后同步时间
+        await saveLastSyncTime(Date.now());
+        // 重新渲染
+        this.renderComponentList();
+    }
 
-        // 同步远程组件事件
-        document.getElementById('sync-components').addEventListener('click', async () => {
-            const syncBtn = document.getElementById('sync-components');
-            syncBtn.disabled = true;
-            syncBtn.textContent = '同步中...';
+    // 切换组件启用/禁用状态
+    async toggleComponentStatus(componentId) {
+        const component = this.installedComponents.find(c => c.id === componentId);
+        if (!component) return;
 
-            try {
-                await this.loadRemoteComponents();
-                this.renderComponentList();
-                alert('组件列表已同步至最新');
-            } catch (error) {
-                alert('同步失败: ' + error.message);
-            } finally {
-                syncBtn.disabled = false;
-                syncBtn.textContent = '同步远程组件';
-            }
-        });
+        // 切换状态
+        component.enabled = !component.enabled;
+        // 保存到本地存储
+        await saveInstalledComponents(this.installedComponents);
+        // 重新渲染
+        this.renderComponentList();
+    }
 
-        // 模态框事件
-        const modal = document.getElementById('installModal');
-        // 打开模态框（实际项目中可通过"手动安装"按钮触发）
-        // 这里预留触发逻辑，可在需要时添加按钮绑定
-        document.getElementById('confirm-install').addEventListener('click', async () => {
-            const input = document.getElementById('component-url');
-            const value = input.value.trim();
-            if (!value) {
-                alert('请输入组件ID或URL');
-                return;
-            }
-
-            // 简单判断是ID还是URL
-            if (value.includes('http')) {
-                // 处理URL安装逻辑
-                alert(`正在从URL安装: ${value}`);
-            } else {
-                // 处理ID安装逻辑
-                await this.installComponent(value);
-            }
-
-            modal.style.display = 'none';
-            input.value = '';
-        });
-
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
+    // 卸载组件
+    async uninstallComponent(componentId) {
+        // 过滤掉要卸载的组件
+        this.installedComponents = this.installedComponents.filter(c => c.id !== componentId);
+        // 保存到本地存储
+        await saveInstalledComponents(this.installedComponents);
+        // 更新最后同步时间
+        await saveLastSyncTime(Date.now());
+        // 重新渲染
+        this.renderComponentList();
     }
 }
 
-// 导出初始化函数
-export const initComponentManager = () => {
-    new ComponentManager();
+// 初始化函数（供main.js调用）
+export const initComponentManager = async () => {
+    const manager = new ComponentManager();
+    await manager.init();
 };
