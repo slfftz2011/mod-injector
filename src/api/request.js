@@ -4,7 +4,7 @@ import axios from 'axios';
 const request = axios.create({
     baseURL: process.env.NODE_ENV === 'development'
         ? '/mock'  // 开发环境仍用本地mock
-        : 'https://modinjector.slfftz520.github.io/api',  // 生产环境API地址（根据实际调整）
+        : 'https://slfftz2011.github.io/mod-injector/api',  // 生产环境API地址（根据实际调整）
     timeout: 10000
 });
 
