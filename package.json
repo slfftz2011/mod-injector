@@ -1,0 +1,36 @@
+{
+  "name": "netease-mod-injector",
+  "version": "1.0.0",
+  "description": "网易Mod注入工具组件管理模块",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "webpack serve --config config/webpack.dev.js",
+    "build": "webpack --config config/webpack.prod.js",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "deploy": "gh-pages -d dist -r https://github.com/slfftz2011/NeteaseModInjector.git"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "html-loader": "^5.1.0",
+    "localforage": "^1.10.0",
+    "save-dev": "^0.0.1-security",
+    "webpack-merge": "^6.0.1"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.1",
+    "eslint": "^8.57.0",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "author": "slfftz2011",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slfftz2011/NeteaseModInjector.git"
+  }
+}

@@ -1,0 +1,28 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 通用按钮样式 */
+.btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .component-list {
+        grid-template-columns: 1fr !important;
+    }
+}

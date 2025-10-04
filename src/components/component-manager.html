@@ -1,0 +1,34 @@
+<div class="component-manager">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>组件管理</h2>
+        <button id="sync-components" class="btn" style="background: #3498db; color: white; padding: 0.5rem 1rem;">
+            同步远程组件
+        </button>
+    </div>
+
+    <div class="component-filters">
+        <input type="text" id="component-search" placeholder="搜索组件...">
+        <select id="component-filter">
+            <option value="all">全部组件</option>
+            <option value="installed">已安装</option>
+            <option value="enabled">已启用</option>
+        </select>
+    </div>
+
+    <div class="component-list" id="componentList">
+        <!-- 组件项将通过JS动态生成 -->
+        <div style="text-align: center; padding: 2rem;">加载中...</div>
+    </div>
+
+    <!-- 组件安装模态框 -->
+    <div class="modal" id="installModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>安装组件</h3>
+            <input type="text" id="component-url" placeholder="输入组件URL或ID">
+            <button id="confirm-install" class="btn" style="background: #4CAF50; color: white; padding: 0.5rem 1rem; margin-top: 1rem;">
+                确认安装
+            </button>
+        </div>
+    </div>
+</div>
