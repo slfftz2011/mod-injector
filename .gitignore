@@ -1,4 +1,4 @@
-# 必须排除的文件（开发依赖/临时文件）
+
 node_modules/          # 依赖包（体积大，无需上传）
 config/                # webpack配置（仅开发用）
 mock/                  # 模拟数据（仅开发用）
@@ -8,6 +8,4 @@ yarn-debug.log*
 .vscode/
 *.swp
 *.swo
-
-# 可选排除（如果通过脚本自动部署dist，可忽略）
-# dist/                # 若手动部署，需保留dist；若用CI自动部署，可排除
+dist/                  # 构建产物
