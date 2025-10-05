@@ -5,6 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "dev": "webpack serve --config config/webpack.dev.js",
+    "prebuild": "node scripts/generate-components-index.js",
     "build": "webpack --config config/webpack.prod.js",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",

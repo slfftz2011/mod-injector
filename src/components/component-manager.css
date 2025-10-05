@@ -38,6 +38,7 @@
     border-radius: 8px;
     padding: 1.2rem;
     transition: all 0.3s ease;
+    cursor: pointer; /* 提示可点击 */
 }
 
 .component-card:hover {
@@ -64,8 +65,6 @@
 }
 
 .component-actions {
-    display: flex;
-    gap: 0.5rem;
     margin-top: 1rem;
 }
 
@@ -78,27 +77,12 @@
     transition: background 0.2s;
 }
 
-.install-btn {
-    background: #4CAF50;
+.detail-btn {
+    background: #3498db;
     color: white;
 }
 
-.uninstall-btn {
-    background: #f44336;
-    color: white;
-}
-
-.enable-btn {
-    background: #2196F3;
-    color: white;
-}
-
-.disable-btn {
-    background: #ff9800;
-    color: white;
-}
-
-/* 模态框样式 */
+/* 详情模态框样式 */
 .modal {
     display: none;
     position: fixed;
@@ -117,8 +101,10 @@
     padding: 2rem;
     border-radius: 8px;
     width: 90%;
-    max-width: 500px;
+    max-width: 800px;
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .close-btn {
@@ -129,21 +115,28 @@
     cursor: pointer;
 }
 
-#component-url {
-    width: 100%;
-    padding: 0.8rem;
+.cop-branches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin: 1rem 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
 
-#confirm-install {
+.cop-download {
     background: #4CAF50;
     color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
+    padding: 0.5rem 1rem;
     border-radius: 4px;
-    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.component-readme {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+    white-space: pre-line;
 }
 
 /* 深色模式适配 */
@@ -157,9 +150,12 @@
 }
 
 [data-theme="dark"] #component-search,
-[data-theme="dark"] #component-filter,
-[data-theme="dark"] #component-url {
+[data-theme="dark"] #component-filter {
     border-color: #444;
     background: #222;
     color: #fff;
+}
+
+[data-theme="dark"] .component-readme {
+    background: #333;
 }
