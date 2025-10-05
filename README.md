@@ -4,6 +4,8 @@
 
 NeteaseModInjector 是一款专为网易 Minecraft 模组注入器设计的组件管理网站，提供便捷的模组组件浏览、下载和管理功能。
 
+请访问：[modInjectorWeb](https://slfftz2011.github.io/mod-injector)
+
 ## 功能特性
 
 ### 🔍 组件浏览
