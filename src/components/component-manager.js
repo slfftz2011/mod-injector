@@ -1,41 +1,28 @@
-import {
-    saveInstalledComponents,
-    getInstalledComponents,
-    saveLastSyncTime
-} from '../utils/storage';
+import { getRemoteComponents } from '../api/componentApi'; // 导入远程接口方法
 
 export class ComponentManager {
     constructor() {
-        // 组件列表数据（实际项目中可能从接口获取）
-        this.components = [
-            {
-                id: 'comp1',
-                name: '基础样式优化',
-                description: '优化页面基础样式，提升视觉体验',
-                version: '1.0.0',
-                size: '2.3KB',
-                updateTime: '2024-05-01',
-                required: false
-            },
-            {
-                id: 'comp2',
-                name: '核心功能扩展',
-                description: '提供核心功能扩展，不可卸载',
-                version: '2.1.0',
-                size: '5.7KB',
-                updateTime: '2024-04-20',
-                required: true
-            }
-        ];
-        this.installedComponents = []; // 已安装组件列表
+        this.components = []; // 清空硬编码数据，改为从远程获取
+        this.installedComponents = [];
     }
 
-    // 初始化组件管理器
     async init() {
-        // 从本地存储加载已安装组件
-        this.installedComponents = await getInstalledComponents();
-        this.renderComponentList();
-        this.bindEvents();
+        try {
+            // 1. 从远程接口获取COP组件数据（替换硬编码数据）
+            const remoteData = await getRemoteComponents();
+            this.components = remoteData.data || []; // 假设接口返回{data: [...组件列表...]}
+
+            // 2. 加载本地已安装组件
+            this.installedComponents = await getInstalledComponents();
+
+            // 3. 渲染组件列表
+            this.renderComponentList();
+            this.bindEvents();
+        } catch (error) {
+            console.error('获取远程组件失败：', error);
+            const listEl = document.getElementById('componentList');
+            listEl.innerHTML = '<div style="text-align: center; padding: 2rem; color: #f44336;">加载组件失败，请稍后重试</div>';
+        }
     }
 
     // 渲染组件列表（已有的渲染逻辑）
