@@ -1,34 +1,36 @@
 import axios from 'axios';
 
-// 创建axios实例
+// 创建 axios 实例
 const request = axios.create({
-    baseURL: process.env.NODE_ENV === 'development'
-        ? '/mock'  // 开发环境仍用本地mock
-        : 'https://slfftz2011.github.io/mod-injector/api',  // 生产环境API地址（根据实际调整）
-    timeout: 10000
+    timeout: 10000, // 10秒超时
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
-// 请求拦截器
-request.interceptors.request.use(
-    config => {
-        // 可添加请求头（如认证信息）
-        return config;
-    },
-    error => {
-        console.error('请求错误:', error);
-        return Promise.reject(error);
-    }
-);
-
-// 响应拦截器
+// 响应拦截器（统一处理响应格式）
 request.interceptors.response.use(
-    response => {
-        return response.data;
+    (response) => {
+        // 对于非 JSON 响应（如 README.md 文本），直接返回原始数据
+        if (response.config.responseType === 'text') {
+            return { success: true, data: response.data };
+        }
+        // 对于 JSON 响应，假设后端返回 { code: 200, data: ... } 格式
+        const { code, data, message } = response.data;
+        if (code === 200 || code === undefined) { // 兼容静态 JSON 文件（无 code 字段）
+            return { success: true, data: data || response.data, message: message || '请求成功' };
+        } else {
+            return { success: false, message: message || '请求失败' };
+        }
     },
-    error => {
-        console.error('响应错误:', error);
-        alert('请求失败: ' + (error.response?.data?.message || '网络错误'));
-        return Promise.reject(error);
+    (error) => {
+        let message = '网络请求失败';
+        if (error.response) {
+            message = `请求失败（${error.response.status}）`;
+        } else if (error.request) {
+            message = '服务器无响应';
+        }
+        return { success: false, message, error };
     }
 );
 

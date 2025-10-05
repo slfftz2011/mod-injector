@@ -82,7 +82,7 @@
     color: white;
 }
 
-/* 详情模态框样式 */
+/* 修改模态框背景透明度和内容区样式 */
 .modal {
     display: none;
     position: fixed;
@@ -90,21 +90,27 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7); /* 加深背景透明度 */
     z-index: 1000;
     align-items: center;
     justify-content: center;
 }
 
 .modal-content {
-    background: var(--bg-color);
+    background: #fff; /* 确保纯白背景 */
     padding: 2rem;
     border-radius: 8px;
     width: 90%;
-    max-width: 800px;
+    max-width: 500px;
     position: relative;
-    max-height: 90vh;
-    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* 增加阴影增强立体感 */
+    transform: translateY(-20px); /* 轻微上浮效果 */
+    transition: transform 0.3s ease;
+}
+
+/* 显示模态框时的动画 */
+.modal.active .modal-content {
+    transform: translateY(0);
 }
 
 .close-btn {
@@ -158,4 +164,58 @@
 
 [data-theme="dark"] .component-readme {
     background: #333;
+}
+
+/* 版本分支样式 */
+.component-version {
+    cursor: pointer; /* 显示手型光标，提示可点击 */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.version-branch {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+}
+
+.component-version:hover .version-branch {
+    transform: rotate(180deg);
+}
+
+/* 版本分支弹窗 */
+.version-branch-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.version-branch-modal .modal-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    min-width: 250px;
+}
+
+.version-branch-modal ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.version-branch-modal li {
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.version-branch-modal li:hover {
+    background: #f5f5f5;
 }

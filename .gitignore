@@ -1,3 +1,6 @@
+.env
+.env.local
+.env.*.local
 
 node_modules/          # 依赖包（体积大，无需上传）
 config/                # webpack配置（仅开发用）
